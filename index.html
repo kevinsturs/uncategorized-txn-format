@@ -26,14 +26,14 @@
   .logo-img { height: 36px; width: auto; display: block; }
   .topbar-label { font-size: 12px; color: #aaa; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
   .accent-bar { height: 3px; background: linear-gradient(90deg, var(--orange) 0%, var(--amber) 100%); }
-  .wrapper { max-width: 680px; margin: 0 auto; padding: 52px 24px 80px; }
+  .wrapper { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
   .page-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 8px; }
   h1 { font-size: 28px; font-weight: 700; color: var(--gray); margin-bottom: 8px; letter-spacing: -0.02em; }
-  .subtitle { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 36px; }
+  .subtitle { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 32px; }
   .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 28px; }
   .card-top { height: 4px; background: linear-gradient(90deg, var(--orange) 0%, var(--amber) 100%); }
   .drop-zone {
-    padding: 52px 32px; display: flex; flex-direction: column; align-items: center;
+    padding: 48px 32px; display: flex; flex-direction: column; align-items: center;
     gap: 16px; cursor: pointer; border: 2px dashed transparent; margin: 24px;
     border-radius: 6px; transition: all 0.2s;
   }
@@ -50,24 +50,76 @@
   .processing { padding: 52px 32px; text-align: center; color: #aaa; font-size: 13px; }
   .spinner { display: inline-block; width: 36px; height: 36px; border: 3px solid #eee; border-top-color: var(--orange); border-radius: 50%; animation: spin 0.75s linear infinite; margin-bottom: 14px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .result { padding: 32px; }
-  .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-  .check-circle { width: 28px; height: 28px; background: #e8f7ee; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3a8f57; font-size: 14px; }
-  .result-title { font-size: 15px; font-weight: 600; color: var(--gray); }
+
+  /* Results layout */
+  .results-wrap { padding: 0; }
+
+  /* Tab nav */
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); background: #fafafa; }
+  .tab-btn {
+    padding: 14px 24px; font-size: 13px; font-weight: 600; color: #aaa;
+    border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent;
+    margin-bottom: -1px; transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .tab-btn:hover:not(.active) { color: var(--gray); }
+
+  .tab-content { display: none; padding: 28px 32px; }
+  .tab-content.active { display: block; }
+
+  /* Stats row */
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
   .stat { background: var(--light-gray); border-radius: 6px; padding: 14px; text-align: center; }
   .stat-val { font-size: 1.6rem; font-weight: 700; color: var(--gray); line-height: 1; }
   .stat-val.accent { color: var(--orange); }
   .stat-label { font-size: 10px; color: #aaa; margin-top: 5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+
   .success-msg { font-size: 13px; color: #3a8f57; background: #f0faf4; border: 1px solid #c3e8d1; border-radius: 5px; padding: 11px 14px; margin-bottom: 18px; }
   .reset-btn { background: transparent; border: 1px solid var(--border); color: #999; padding: 10px 20px; font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; border-radius: 5px; transition: all 0.15s; width: 100%; font-weight: 500; }
   .reset-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* Counterparty table */
+  .section-title { font-size: 14px; font-weight: 600; color: var(--gray); margin-bottom: 4px; }
+  .section-sub { font-size: 13px; color: #aaa; margin-bottom: 20px; }
+
+  .cp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .cp-table th {
+    text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em; color: #999;
+    border-bottom: 2px solid var(--border); background: #fafafa;
+  }
+  .cp-table th.num { text-align: right; }
+  .cp-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  .cp-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .cp-table tr:hover td { background: #fff8f5; }
+  .cp-table tr:last-child td { border-bottom: none; }
+
+  .addr { font-family: monospace; font-size: 12px; color: #555; word-break: break-all; }
+  .addr-short { font-family: monospace; font-size: 12px; color: #555; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
+  .badge-dep { background: #e8f7ee; color: #2e7d4f; }
+  .badge-wdw { background: #fff0ec; color: #c0401a; }
+  .badge-both { background: #f0f0ff; color: #5555aa; }
+
+  .heat-bar { width: 80px; height: 6px; background: #eee; border-radius: 3px; display: inline-block; vertical-align: middle; margin-left: 8px; }
+  .heat-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--orange), var(--amber)); }
+
+  .filter-row { display: flex; gap: 10px; margin-bottom: 18px; align-items: center; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 500; cursor: pointer; color: #777; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .filter-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .filter-btn:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
+
+  .search-box { margin-left: auto; padding: 6px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-family: 'Inter', sans-serif; outline: none; width: 200px; }
+  .search-box:focus { border-color: var(--orange); }
+
   .error-panel { padding: 32px; font-size: 13px; color: #c05050; }
   .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #bbb; margin-bottom: 12px; }
   .rule-list { display: flex; flex-wrap: wrap; gap: 6px; }
   .rule-tag { font-size: 11px; padding: 4px 10px; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: #bbb; text-decoration: line-through; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
   footer { text-align: center; font-size: 12px; color: #ccc; padding: 24px; }
+  .empty-state { text-align: center; padding: 40px; color: #bbb; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -79,9 +131,12 @@
 <div class="wrapper">
   <p class="page-title">Crypto Transaction Export Tool</p>
   <h1>Clean &amp; Format Transactions</h1>
-  <p class="subtitle">Upload a raw CSV export to automatically remove unused columns, clean currency tickers, sort by net value, and download a formatted XLSX — ready for client review.</p>
+  <p class="subtitle">Upload a raw CSV export to automatically remove unused columns, clean currency tickers, sort by net value, and generate a counterparty analysis — ready for client review.</p>
+
   <div class="card">
     <div class="card-top"></div>
+
+    <!-- Upload -->
     <div id="panel-upload" class="panel active">
       <input type="file" id="file-input" accept=".csv" />
       <div class="drop-zone" id="drop-zone">
@@ -91,28 +146,68 @@
         <button class="btn" onclick="document.getElementById('file-input').click()">Select CSV File</button>
       </div>
     </div>
+
+    <!-- Processing -->
     <div id="panel-processing" class="panel">
       <div class="processing">
         <div class="spinner"></div>
-        <p>Processing your transactions...</p>
+        <p>Processing transactions &amp; analysing counterparties...</p>
       </div>
     </div>
+
+    <!-- Results -->
     <div id="panel-done" class="panel">
-      <div class="result">
-        <div class="result-header">
-          <div class="check-circle">✓</div>
-          <span class="result-title">Export complete — file downloaded</span>
+      <div class="results-wrap">
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab('transactions')">📄 Transactions</button>
+          <button class="tab-btn" onclick="switchTab('counterparties')">🔍 Counterparty Analysis</button>
         </div>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-val accent" id="stat-visible">—</div><div class="stat-label">Visible rows</div></div>
-          <div class="stat"><div class="stat-val" id="stat-hidden">—</div><div class="stat-label">Hidden &lt;$100</div></div>
-          <div class="stat"><div class="stat-val">20</div><div class="stat-label">Cols removed</div></div>
-          <div class="stat"><div class="stat-val" id="stat-kept">—</div><div class="stat-label">Cols kept</div></div>
+
+        <!-- Tab: Transactions -->
+        <div id="tab-transactions" class="tab-content active">
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-val accent" id="stat-visible">—</div><div class="stat-label">Visible rows</div></div>
+            <div class="stat"><div class="stat-val" id="stat-hidden">—</div><div class="stat-label">Hidden &lt;$100</div></div>
+            <div class="stat"><div class="stat-val">20</div><div class="stat-label">Cols removed</div></div>
+            <div class="stat"><div class="stat-val" id="stat-kept">—</div><div class="stat-label">Cols kept</div></div>
+          </div>
+          <div class="success-msg">✓ transactions_cleaned.xlsx has been downloaded — includes both Transactions and Counterparty Analysis sheets</div>
+          <button class="reset-btn" onclick="reset()">Process another file</button>
         </div>
-        <div class="success-msg">✓ transactions_cleaned.xlsx has been downloaded to your device</div>
-        <button class="reset-btn" onclick="reset()">Process another file</button>
+
+        <!-- Tab: Counterparty Analysis -->
+        <div id="tab-counterparties" class="tab-content">
+          <div class="section-title">Recurring Counterparties</div>
+          <p class="section-sub">Addresses identified as counterparties across deposits and withdrawals, ranked by transaction count.</p>
+
+          <div class="filter-row">
+            <button class="filter-btn active" onclick="filterCP('all', this)">All</button>
+            <button class="filter-btn" onclick="filterCP('deposit', this)">Deposits only</button>
+            <button class="filter-btn" onclick="filterCP('withdrawal', this)">Withdrawals only</button>
+            <button class="filter-btn" onclick="filterCP('both', this)">Both directions</button>
+            <input class="search-box" id="cp-search" placeholder="Search address..." oninput="renderCPTable()" />
+          </div>
+
+          <table class="cp-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Counterparty Address</th>
+                <th>Direction</th>
+                <th class="num">Txns</th>
+                <th class="num">Avg Value (USD)</th>
+                <th class="num">Total Value (USD)</th>
+                <th>Activity</th>
+              </tr>
+            </thead>
+            <tbody id="cp-tbody"></tbody>
+          </table>
+          <div id="cp-empty" class="empty-state" style="display:none">No counterparties match this filter.</div>
+        </div>
       </div>
     </div>
+
+    <!-- Error -->
     <div id="panel-error" class="panel">
       <div class="error-panel">
         <p>&#x26A0; Error: <span id="error-msg"></span></p><br />
@@ -120,6 +215,7 @@
       </div>
     </div>
   </div>
+
   <hr class="divider" />
   <div>
     <p class="section-label">Columns automatically removed</p>
@@ -127,6 +223,7 @@
   </div>
 </div>
 <footer>© CFO Associates — Internal Tool</footer>
+
 <script>
 const COLS_TO_DROP = [
   'ID (read-only)', 'Parent ID (read-only)', 'Tag',
@@ -141,16 +238,48 @@ const COLS_TO_DROP = [
 ];
 const NET_VALUE_COL = 'Net Value (read-only)';
 const MIN_VALUE = 100;
+
+let cpData = [];
+let cpFilter = 'all';
+
 document.getElementById('rule-list').innerHTML = COLS_TO_DROP.map(c => `<span class="rule-tag">${c}</span>`).join('');
+
 const dropZone = document.getElementById('drop-zone');
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
 document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
-function showPanel(name) { document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); document.getElementById('panel-' + name).classList.add('active'); }
-function reset() { document.getElementById('file-input').value = ''; showPanel('upload'); }
+
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function filterCP(type, btn) {
+  cpFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCPTable();
+}
+
+function reset() {
+  document.getElementById('file-input').value = '';
+  cpData = [];
+  cpFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  showPanel('upload');
+}
+
 function cleanCurrency(val) { return val ? String(val).split(';')[0].trim() : val; }
 function parseNetValue(val) { const n = parseFloat(String(val).replace(/[^0-9.\-]/g, '')); return isNaN(n) ? 0 : n; }
+
 function parseCSVLine(line) {
   const result = []; let cur = '', inQuote = false;
   for (let i = 0; i < line.length; i++) {
@@ -161,40 +290,159 @@ function parseCSVLine(line) {
   }
   result.push(cur); return result;
 }
+
+function fmtUSD(val) {
+  return val === 0 ? '—' : '$' + val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function shortAddr(addr) {
+  if (!addr || addr.length < 12) return addr || '—';
+  return addr.slice(0, 8) + '…' + addr.slice(-6);
+}
+
+function renderCPTable() {
+  const search = document.getElementById('cp-search').value.toLowerCase();
+  let rows = cpData;
+
+  if (cpFilter !== 'all') rows = rows.filter(r => r.direction === cpFilter);
+  if (search) rows = rows.filter(r => r.address.toLowerCase().includes(search));
+
+  const maxTxns = Math.max(...cpData.map(r => r.count), 1);
+  const tbody = document.getElementById('cp-tbody');
+  const empty = document.getElementById('cp-empty');
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = rows.map((r, i) => {
+    const pct = Math.round((r.count / maxTxns) * 100);
+    const badgeClass = r.direction === 'deposit' ? 'badge-dep' : r.direction === 'withdrawal' ? 'badge-wdw' : 'badge-both';
+    const badgeLabel = r.direction === 'deposit' ? 'Deposits' : r.direction === 'withdrawal' ? 'Withdrawals' : 'Both';
+    return `<tr>
+      <td style="color:#bbb;font-size:12px">${i+1}</td>
+      <td><span class="addr" title="${r.address}">${r.address}</span></td>
+      <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+      <td class="num"><strong>${r.count}</strong></td>
+      <td class="num">${fmtUSD(r.avgValue)}</td>
+      <td class="num">${fmtUSD(r.totalValue)}</td>
+      <td><div class="heat-bar"><div class="heat-fill" style="width:${pct}%"></div></div></td>
+    </tr>`;
+  }).join('');
+}
+
 async function handleFile(file) {
   if (!file) return;
-  if (!file.name.endsWith('.csv')) { document.getElementById('error-msg').textContent = 'Please upload a .csv file.'; showPanel('error'); return; }
+  if (!file.name.endsWith('.csv')) {
+    document.getElementById('error-msg').textContent = 'Please upload a .csv file.';
+    showPanel('error'); return;
+  }
   showPanel('processing');
   await new Promise(r => setTimeout(r, 60));
+
   try {
     const lines = (await file.text()).split('\n');
     const headers = parseCSVLine(lines[0]);
     const rows = lines.slice(1).filter(l => l.trim()).map(l => parseCSVLine(l));
+
+    // Build object rows for easier access
+    const objRows = rows.map(r => {
+      const o = {};
+      headers.forEach((h, i) => o[h] = r[i] ?? '');
+      return o;
+    });
+
+    // === COUNTERPARTY ANALYSIS ===
+    // deposit  -> TxSrc is counterparty
+    // withdrawal -> TxDest is counterparty
+    const cpMap = {};
+    objRows.forEach(row => {
+      const type = (row['Type'] || '').toLowerCase().trim();
+      const netVal = parseNetValue(row[NET_VALUE_COL]);
+      let counterparty = '';
+      let direction = '';
+
+      if (type === 'deposit') {
+        counterparty = (row['TxSrc'] || '').trim();
+        direction = 'deposit';
+      } else if (type === 'withdrawal') {
+        counterparty = (row['TxDest'] || '').trim();
+        direction = 'withdrawal';
+      }
+
+      if (!counterparty) return;
+
+      if (!cpMap[counterparty]) {
+        cpMap[counterparty] = { address: counterparty, count: 0, totalValue: 0, directions: new Set() };
+      }
+      cpMap[counterparty].count++;
+      cpMap[counterparty].totalValue += Math.abs(netVal);
+      cpMap[counterparty].directions.add(direction);
+    });
+
+    cpData = Object.values(cpMap).map(cp => ({
+      address: cp.address,
+      count: cp.count,
+      totalValue: cp.totalValue,
+      avgValue: cp.totalValue / cp.count,
+      direction: cp.directions.size > 1 ? 'both' : [...cp.directions][0]
+    })).sort((a, b) => b.count - a.count || b.totalValue - a.totalValue);
+
+    renderCPTable();
+
+    // === CLEAN TRANSACTIONS FOR XLSX ===
     const keepIndices = [], keepHeaders = ['Client Comment'];
     headers.forEach((h, i) => { if (!COLS_TO_DROP.includes(h)) { keepIndices.push(i); keepHeaders.push(h); } });
+
     const netIdx = keepHeaders.indexOf(NET_VALUE_COL);
     const fromCIdx = keepHeaders.indexOf('From Currency');
     const toCIdx = keepHeaders.indexOf('To Currency');
+
     let processed = rows.map(row => {
       const r = ['', ...keepIndices.map(i => row[i] ?? '')];
       if (fromCIdx >= 0) r[fromCIdx] = cleanCurrency(r[fromCIdx]);
       if (toCIdx >= 0) r[toCIdx] = cleanCurrency(r[toCIdx]);
       return r;
     });
+
     processed.sort((a, b) => parseNetValue(b[netIdx]) - parseNetValue(a[netIdx]));
     const visible = processed.filter(r => Math.abs(parseNetValue(r[netIdx])) >= MIN_VALUE);
     const hidden = processed.filter(r => Math.abs(parseNetValue(r[netIdx])) < MIN_VALUE);
+
+    // === BUILD XLSX with 2 sheets ===
     const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Transactions
     const wsData = [keepHeaders, ...visible, ...hidden];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols'] = keepHeaders.map((_, i) => ({ wch: i === 0 ? 22 : 18 }));
-    ws['!rows'] = wsData.map((_, i) => i === 0 ? { hpt: 26 } : i > visible.length ? { hidden: true } : {});
-    XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
+    const ws1 = XLSX.utils.aoa_to_sheet(wsData);
+    ws1['!cols'] = keepHeaders.map((_, i) => ({ wch: i === 0 ? 22 : 20 }));
+    ws1['!rows'] = wsData.map((_, i) => i === 0 ? { hpt: 26 } : i > visible.length ? { hidden: true } : {});
+    XLSX.utils.book_append_sheet(wb, ws1, 'Transactions');
+
+    // Sheet 2: Counterparty Analysis
+    const cpHeaders = ['Counterparty Address', 'Direction', 'Transaction Count', 'Average Value (USD)', 'Total Value (USD)'];
+    const cpRows = cpData.map(r => [
+      r.address,
+      r.direction === 'both' ? 'Deposits & Withdrawals' : r.direction.charAt(0).toUpperCase() + r.direction.slice(1) + 's',
+      r.count,
+      parseFloat(r.avgValue.toFixed(2)),
+      parseFloat(r.totalValue.toFixed(2))
+    ]);
+
+    const ws2 = XLSX.utils.aoa_to_sheet([cpHeaders, ...cpRows]);
+    ws2['!cols'] = [{ wch: 52 }, { wch: 26 }, { wch: 18 }, { wch: 22 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Counterparty Analysis');
+
     XLSX.writeFile(wb, 'transactions_cleaned.xlsx');
+
     document.getElementById('stat-visible').textContent = visible.length;
     document.getElementById('stat-hidden').textContent = hidden.length;
     document.getElementById('stat-kept').textContent = keepHeaders.length;
     showPanel('done');
+
   } catch (e) {
     document.getElementById('error-msg').textContent = e.message || 'Something went wrong.';
     showPanel('error');
