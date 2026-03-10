@@ -168,11 +168,11 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Counterparty Address</th>
-                <th>Direction</th>
-                <th class="num">Txns</th>
-                <th class="num">Avg Value (USD)</th>
-                <th class="num">Total Value (USD)</th>
+                <th>Counterparty</th>
+                <th class="num">Deposit_Count</th>
+                <th class="num">Withdrawal_Count</th>
+                <th class="num">Total_Recurrence</th>
+                <th class="num">Average_USD_Value</th>
                 <th>Activity</th>
               </tr>
             </thead>
@@ -296,7 +296,9 @@ function txHashCell(hash){
 function renderCPTable(){
   const search = document.getElementById('cp-search').value.toLowerCase();
   let rows = cpData;
-  if(cpFilter!=='all') rows=rows.filter(r=>r.direction===cpFilter);
+  if(cpFilter==='deposit') rows=rows.filter(r=>r.depositCount>0);
+  else if(cpFilter==='withdrawal') rows=rows.filter(r=>r.withdrawalCount>0);
+  else if(cpFilter==='both') rows=rows.filter(r=>r.depositCount>0&&r.withdrawalCount>0);
   if(search) rows=rows.filter(r=>r.address.toLowerCase().includes(search));
 
   const maxTxns = Math.max(...cpData.map(r=>r.count),1);
@@ -308,16 +310,14 @@ function renderCPTable(){
 
   tbody.innerHTML = rows.map((r,i)=>{
     const pct=Math.round((r.count/maxTxns)*100);
-    const bc=r.direction==='deposit'?'badge-dep':r.direction==='withdrawal'?'badge-wdw':'badge-both';
-    const bl=r.direction==='deposit'?'Deposits':r.direction==='withdrawal'?'Withdrawals':'Both';
     // Counterparty address — link if 0x (ETH) or base58 (SOL)
     let addrCell;
     const addr = r.address;
     if(addr.startsWith('0x')){
-      const shortAddr = addr.slice(0,10)+'\u2026'+addr.slice(-6);
+      const shortAddr = addr.slice(0,10)+'…'+addr.slice(-6);
       addrCell=`<a class="tx-link" href="https://blockscan.com/address/${addr}" target="_blank" title="${addr} — View on Blockscan">${shortAddr}${EXT_ICON}</a>`;
     } else if(addr.length>=32 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(addr)){
-      const shortAddr = addr.slice(0,10)+'\u2026'+addr.slice(-6);
+      const shortAddr = addr.slice(0,10)+'…'+addr.slice(-6);
       addrCell=`<a class="tx-link sol-link" href="https://solscan.io/account/${addr}" target="_blank" title="${addr} — View on Solscan">${shortAddr}${EXT_ICON}</a>`;
     } else {
       addrCell=`<span class="addr" title="${addr}">${addr}</span>`;
@@ -325,10 +325,10 @@ function renderCPTable(){
     return `<tr>
       <td style="color:#bbb;font-size:12px">${i+1}</td>
       <td>${addrCell}</td>
-      <td><span class="badge ${bc}">${bl}</span></td>
+      <td class="num">${r.depositCount>0?`<strong>${r.depositCount}</strong>`:'<span style="color:#ddd">—</span>'}</td>
+      <td class="num">${r.withdrawalCount>0?`<strong>${r.withdrawalCount}</strong>`:'<span style="color:#ddd">—</span>'}</td>
       <td class="num"><strong>${r.count}</strong></td>
       <td class="num">${fmtUSD(r.avgValue)}</td>
-      <td class="num">${fmtUSD(r.totalValue)}</td>
       <td><div class="heat-bar"><div class="heat-fill" style="width:${pct}%"></div></div></td>
     </tr>`;
   }).join('');
@@ -359,18 +359,20 @@ async function handleFile(file){
       if(type==='deposit'){counterparty=(row['TxSrc']||'').trim();direction='deposit';}
       else if(type==='withdrawal'){counterparty=(row['TxDest']||'').trim();direction='withdrawal';}
       if(!counterparty) return;
-      if(!cpMap[counterparty]) cpMap[counterparty]={address:counterparty,count:0,totalValue:0,directions:new Set()};
-      cpMap[counterparty].count++;
+      if(!cpMap[counterparty]) cpMap[counterparty]={address:counterparty,depositCount:0,withdrawalCount:0,totalValue:0};
+      if(direction==='deposit') cpMap[counterparty].depositCount++;
+      else cpMap[counterparty].withdrawalCount++;
       cpMap[counterparty].totalValue+=Math.abs(netVal);
-      cpMap[counterparty].directions.add(direction);
     });
 
     cpData=Object.values(cpMap).map(cp=>({
       address:cp.address,
-      count:cp.count,
+      depositCount:cp.depositCount,
+      withdrawalCount:cp.withdrawalCount,
+      count:cp.depositCount+cp.withdrawalCount,
       totalValue:cp.totalValue,
-      avgValue:cp.totalValue/cp.count,
-      direction:cp.directions.size>1?'both':[...cp.directions][0]
+      avgValue:cp.totalValue/(cp.depositCount+cp.withdrawalCount),
+      direction:cp.depositCount>0&&cp.withdrawalCount>0?'both':cp.depositCount>0?'deposit':'withdrawal'
     })).sort((a,b)=>b.count-a.count||b.totalValue-a.totalValue);
 
     renderCPTable();
@@ -428,16 +430,16 @@ async function handleFile(file){
     XLSX.utils.book_append_sheet(wb,ws1,'Transactions');
 
     // === XLSX: Sheet 2 - Counterparty Analysis ===
-    const cpHeaders=['Counterparty Address','Direction','Transaction Count','Average Value (USD)','Total Value (USD)'];
+    const cpHeaders=['Counterparty','Deposit_Count','Withdrawal_Count','Total_Recurrence','Average_USD_Value'];
     const cpRows=cpData.map(r=>[
       r.address,
-      r.direction==='both'?'Deposits & Withdrawals':r.direction.charAt(0).toUpperCase()+r.direction.slice(1)+'s',
+      r.depositCount,
+      r.withdrawalCount,
       r.count,
-      parseFloat(r.avgValue.toFixed(2)),
-      parseFloat(r.totalValue.toFixed(2))
+      parseFloat(r.avgValue.toFixed(2))
     ]);
     const ws2=XLSX.utils.aoa_to_sheet([cpHeaders,...cpRows]);
-    ws2['!cols']=[{wch:52},{wch:26},{wch:18},{wch:22},{wch:20}];
+    ws2['!cols']=[{wch:52},{wch:16},{wch:18},{wch:18},{wch:22}];
 
     // Add hyperlinks for counterparty addresses — ETH -> Blockscan, SOL -> Solscan
     cpRows.forEach((row,ri)=>{
