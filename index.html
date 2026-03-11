@@ -412,13 +412,17 @@ async function handleFile(file){
       };
     }
 
-    // Add hyperlinks for TxHash cells — ETH (0x) -> Blockscan, SOL (base58 80+) -> Solscan
+    // Fix TxHash cells: force string type + restore 0x if stripped + apply hyperlinks
     const txHashCol = keepHeaders.indexOf('TxHash');
     if(txHashCol>=0){
       wsData.forEach((row,ri)=>{
         if(ri===0) return;
-        const hash=(row[txHashCol]||'').trim();
+        let hash=(row[txHashCol]||'').toString().trim();
+        // SheetJS may strip 0x if cell looks numeric — detect and restore
+        if(/^[0-9a-fA-F]{64}$/.test(hash)) hash = '0x' + hash;
         const cellRef=XLSX.utils.encode_cell({r:ri,c:txHashCol});
+        // Force cell to string type to prevent future truncation
+        if(ws1[cellRef]){ ws1[cellRef].t='s'; ws1[cellRef].v=hash; ws1[cellRef].w=hash; }
         if(hash.startsWith('0x')){
           applyLink(ws1, cellRef, `https://blockscan.com/tx/${hash}`, 'View on Blockscan');
         } else if(hash.length>=80 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(hash)){
